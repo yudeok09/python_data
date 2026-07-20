@@ -1,93 +1,168 @@
 # 실습3. asyncio 기반 비동기 수집기
-# 60건을 하나씩 기다리면 한참 걸리는데, 동시에 던지면 1~2초면 끝난다.
-# 대신 무작정 다 던지면 서버가 죽으니까 Semaphore로 동시 10개 제한 + 실패시 재시도.
-# USE_REAL_HTTP=False 라서 인터넷 없이 모의(mock)로 돈다.
-# 실행: python practice3/async_collector.py
+# 기본값은 인터넷 없이 실행되는 모의 수집이다.
+# USE_REAL_HTTP=True 또는 --real 옵션을 사용하면 실제 공개 API를 호출한다.
+#
+# 모의 실행: python practice3/async_collector.py
+# 실제 실행: python practice3/async_collector.py --real
 
+import argparse
 import asyncio
 import json
 import random
 import time
 from pathlib import Path
 
-USE_REAL_HTTP = False  # 진짜 API 없으니 False 고정. httpx 쓸 일 있으면 여기만 바꾸면 됨
+import httpx
+
+USE_REAL_HTTP = False
 TOTAL = 60
 MAX_CONCURRENT = 10
-FAIL_RATE = 0.08  # 8% 확률로 일부러 실패시켜서 재시도 로직 테스트
-
-random.seed(42)  # 결과 재현되게
+FAIL_RATE = 0.08
+REAL_API_URL = "https://jsonplaceholder.typicode.com/posts/{item_id}"
 
 
 async def fetch_mock(item_id: int) -> dict:
-    """가짜 API 호출. 0.1~0.25초 걸리고 가끔 터진다 (현실 반영)"""
+    """응답 지연과 일시 오류가 있는 가짜 API 호출"""
     await asyncio.sleep(random.uniform(0.1, 0.25))
     if random.random() < FAIL_RATE:
-        raise ConnectionError(f"item {item_id}: 서버가 잠깐 삐끗함")
-    return {"id": item_id, "value": round(random.uniform(1, 100), 2), "ok": True}
+        raise ConnectionError(f"item {item_id}: 일시적인 모의 서버 오류")
+    return {
+        "id": item_id,
+        "value": round(random.uniform(1, 100), 2),
+        "source": "mock",
+        "ok": True,
+    }
 
 
-# ---------- 동기 버전 (비교용) ----------
+async def fetch_real(client: httpx.AsyncClient, item_id: int) -> dict:
+    """JSONPlaceholder 공개 API에서 실제 HTTP 응답을 수집"""
+    api_id = item_id + 1
+    response = await client.get(REAL_API_URL.format(item_id=api_id))
+    response.raise_for_status()
+    data = response.json()
+    return {
+        "id": item_id,
+        "api_id": data["id"],
+        "title": data["title"],
+        "source": "jsonplaceholder",
+        "ok": True,
+    }
+
+
 def fetch_sync(item_id: int) -> dict:
-    time.sleep(0.18)  # 평균 대기시간이랑 비슷하게
+    time.sleep(0.18)
     return {"id": item_id, "ok": True}
 
 
-def run_sync_sample(n=12):
-    # 60개 다 돌리면 10초 넘게 걸려서 12개만 재고 5배로 환산했다
+def run_sync_sample(total: int, sample_size: int = 12) -> tuple[float, float]:
+    sample_size = min(sample_size, total)
     start = time.perf_counter()
-    for i in range(n):
+    for i in range(sample_size):
         fetch_sync(i)
     elapsed = time.perf_counter() - start
-    return elapsed, elapsed * (TOTAL / n)
+    return elapsed, elapsed * (total / sample_size)
 
 
-# ---------- 비동기 수집기 본체 ----------
-sem = asyncio.Semaphore(MAX_CONCURRENT)  # 입장권 10장
-retry_log = []  # 어떤 애가 몇 번 삐끗했는지 기록
-
-
-async def collect_one(item_id: int, max_retries=3) -> dict:
+async def collect_one(
+    item_id: int,
+    sem: asyncio.Semaphore,
+    retry_log: list[tuple[int, int, float]],
+    client: httpx.AsyncClient | None = None,
+    max_retries: int = 3,
+) -> dict:
     for attempt in range(max_retries):
         try:
-            async with sem:  # 입장권 없으면 여기서 줄 서서 대기
-                async with asyncio.timeout(2.0):  # 2초 넘게 안 오면 포기
-                    return await fetch_mock(item_id)
-        except (ConnectionError, TimeoutError) as e:
+            async with sem:
+                async with asyncio.timeout(5.0):
+                    if client is None:
+                        return await fetch_mock(item_id)
+                    return await fetch_real(client, item_id)
+        except (ConnectionError, TimeoutError, httpx.HTTPError) as error:
             if attempt == max_retries - 1:
-                # 3번 다 실패 → 포기하고 실패 기록으로 반환
-                return {"id": item_id, "ok": False, "error": str(e)}
-            wait = 0.3 * (2**attempt)  # 0.3 → 0.6 → 1.2초 (지수 백오프)
+                return {"id": item_id, "ok": False, "error": str(error)}
+
+            wait = 0.3 * (2**attempt)
             retry_log.append((item_id, attempt + 1, round(wait, 1)))
             await asyncio.sleep(wait)
 
 
-async def main():
-    tasks = [collect_one(i) for i in range(TOTAL)]  # 아직 실행 전, 예약만
-    results = await asyncio.gather(
-        *tasks, return_exceptions=True
-    )  # 하나 터져도 전체는 산다
+async def collect(
+    total: int = TOTAL,
+    max_concurrent: int = MAX_CONCURRENT,
+    use_real_http: bool = USE_REAL_HTTP,
+) -> tuple[list[dict], list[dict], list[tuple[int, int, float]]]:
+    sem = asyncio.Semaphore(max_concurrent)
+    retry_log: list[tuple[int, int, float]] = []
+
+    if use_real_http:
+        timeout = httpx.Timeout(5.0)
+        headers = {"User-Agent": "SKALA-async-practice/1.0"}
+        async with httpx.AsyncClient(timeout=timeout, headers=headers) as client:
+            tasks = [collect_one(i, sem, retry_log, client) for i in range(total)]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+    else:
+        tasks = [collect_one(i, sem, retry_log) for i in range(total)]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
 
     ok = [r for r in results if isinstance(r, dict) and r.get("ok")]
     fail = [r for r in results if not (isinstance(r, dict) and r.get("ok"))]
-    return ok, fail
+    return ok, fail, retry_log
 
 
-if __name__ == "__main__":
-    print(
-        f"수집 대상 {TOTAL}건 / 동시 제한 {MAX_CONCURRENT} / 실패율 {FAIL_RATE:.0%} (모의)"
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="asyncio 비동기 수집기")
+    parser.add_argument(
+        "--real",
+        action="store_true",
+        help="모의 데이터 대신 JSONPlaceholder 공개 API를 호출합니다.",
     )
-    print("-" * 50)
+    parser.add_argument("--total", type=int, default=TOTAL, help="수집할 데이터 개수")
+    parser.add_argument(
+        "--max-concurrent",
+        type=int,
+        default=MAX_CONCURRENT,
+        help="동시 요청 제한",
+    )
+    return parser.parse_args()
 
-    # 1. 동기 방식이 얼마나 느린지부터
-    sample_t, est = run_sync_sample()
-    print(f"[동기]   12건 실측 {sample_t:.2f}초 → 60건 환산 약 {est:.1f}초")
 
-    # 2. 비동기 수집
+def main() -> None:
+    args = parse_args()
+    use_real_http = USE_REAL_HTTP or args.real
+
+    if args.total < 1:
+        raise ValueError("수집 개수는 1 이상이어야 합니다.")
+    if use_real_http and args.total > 100:
+        raise ValueError("JSONPlaceholder posts는 최대 100건까지 제공합니다.")
+    if args.max_concurrent < 1:
+        raise ValueError("동시 요청 제한은 1 이상이어야 합니다.")
+
+    mode = "실제 HTTP" if use_real_http else "모의"
+    print(f"수집 대상 {args.total}건 / 동시 제한 {args.max_concurrent} / {mode} 모드")
+    print("-" * 58)
+
+    estimated_sync = None
+    if not use_real_http:
+        sample_time, estimated_sync = run_sync_sample(args.total)
+        print(
+            f"[동기]   {min(12, args.total)}건 실측 {sample_time:.2f}초 "
+            f"→ {args.total}건 환산 약 {estimated_sync:.1f}초"
+        )
+
+    random.seed(42)
     start = time.perf_counter()
-    ok, fail = asyncio.run(main())
+    ok, fail, retry_log = asyncio.run(
+        collect(args.total, args.max_concurrent, use_real_http)
+    )
     elapsed = time.perf_counter() - start
 
-    print(f"[비동기] 60건 실제 {elapsed:.2f}초  (약 {est / elapsed:.1f}배 빠름)")
+    if estimated_sync is None:
+        print(f"[실제 HTTP 비동기] {args.total}건 {elapsed:.2f}초")
+    else:
+        print(
+            f"[비동기] {args.total}건 실제 {elapsed:.2f}초 "
+            f"(약 {estimated_sync / elapsed:.1f}배 빠름)"
+        )
     print(f"\n성공 {len(ok)}건 / 최종 실패 {len(fail)}건")
 
     if retry_log:
@@ -95,14 +170,16 @@ if __name__ == "__main__":
         for item_id, nth, wait in retry_log:
             print(f"  - item {item_id}: {nth}차 실패 → {wait}초 쉬고 다시 시도")
 
-    # 3. 확장과제: 재시도까지 다 해도 안 된 건 dead_letter로 격리
-    #    실패를 조용히 버리면 나중에 원인 추적이 안 되니까 파일로 남긴다
     if fail:
         dead_path = Path(__file__).resolve().parent / "dead_letter.json"
         dead_path.write_text(
             json.dumps(fail, ensure_ascii=False, indent=2), encoding="utf-8"
         )
-        print(f"실패 건은 {dead_path.name} 에 기록해둠 (나중에 재처리용)")
+        print(f"실패 건은 {dead_path.name}에 기록했습니다.")
 
-    sample = sorted(ok, key=lambda r: r["id"])[:3]
+    sample = sorted(ok, key=lambda row: row["id"])[:3]
     print(f"\n수집 결과 샘플: {sample}")
+
+
+if __name__ == "__main__":
+    main()
