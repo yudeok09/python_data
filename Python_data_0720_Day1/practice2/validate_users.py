@@ -27,7 +27,7 @@ class User(BaseModel):
     is_active: bool
     signup_date: date  # 문자열 "2024-07-02"를 알아서 date로 바꿔줌
     profile: Profile  # 모델 안에 모델
-    tags: list[str] = []
+    tags: list[str] = Field(default_factory=list)
 
     @field_validator("email")
     @classmethod

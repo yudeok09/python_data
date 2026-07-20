@@ -12,7 +12,8 @@ Python_data_0720_Day1/
 ├── Total1/                       종합실습1. 비동기 ETL 파이프라인 + pytest 6개
 │   ├── models.py  pipeline.py  test_pipeline.py
 ├── Advanced/log_watchdog.py      [창의] 슬라이딩 윈도우 5xx 이상 탐지
-└── data/                         실습용 데이터
+├── data/                         실습용 데이터
+└── screenshots/                  실행 결과 캡처 6장
 
 Python_data_0721_Day2/            (Day2 — 실습4·5, 종합실습2·3 예정)
 ```
@@ -39,3 +40,4 @@ python Advanced/log_watchdog.py
 - 실습2: 40건 → 유효 36 / 오염 4
 - 실습3: 60건 약 1.5초 (동기 환산 11초 대비 7배↑)
 - 종합1: pytest 6개 PASSED, output/에 CSV·Parquet 생성
+- 코드 검사: `ruff check Python_data_0720_Day1` 통과

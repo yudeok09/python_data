@@ -24,7 +24,7 @@ class Product(BaseModel):
     price: float = Field(gt=0)  # 음수/0원 상품 거부
     quantity: int = Field(ge=0, le=10_000)  # 재고는 0~1만 사이만 정상으로 본다
     seller: Seller  # 중첩 모델
-    tags: list[str] = []
+    tags: list[str] = Field(default_factory=list)
 
     @field_validator("category")
     @classmethod
