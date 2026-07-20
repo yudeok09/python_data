@@ -6,6 +6,7 @@
 import json
 from datetime import date
 from pathlib import Path
+from typing import Annotated
 
 from pydantic import BaseModel, Field, ValidationError, field_validator
 
@@ -23,7 +24,8 @@ class User(BaseModel):
     id: int
     username: str
     email: str
-    age: int = Field(ge=0, le=120)  # 음수 나이 차단
+    # Annotated 스타일: 타입힌트 자체에 검증 규칙을 붙인다 (아래 score의 = Field(...) 방식과 같은 효과)
+    age: Annotated[int, Field(ge=0, le=120)]  # 음수 나이 차단
     is_active: bool
     signup_date: date  # 문자열 "2024-07-02"를 알아서 date로 바꿔줌
     profile: Profile  # 모델 안에 모델

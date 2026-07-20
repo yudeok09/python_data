@@ -38,6 +38,18 @@ python Advanced/log_watchdog.py
 python Advanced/skala_store_manager.py
 ```
 
+## 실습 가이드 폴더명 대응표
+
+폴더 구조는 제출요령(practice1~, Total1, Advanced)을 따랐습니다.
+실습 가이드 문서의 폴더명과는 아래처럼 대응됩니다.
+
+| 가이드 문서            | 제출 폴더  |
+| ---------------------- | ---------- |
+| ex01_streaming_agg     | practice1  |
+| ex02_pydantic_validation | practice2 |
+| ex03_async_collector   | practice3  |
+| capstone01_async_etl   | Total1     |
+
 ## 체크포인트 확인
 
 - 실습1: 총 200,000건 / 5xx 8.0%

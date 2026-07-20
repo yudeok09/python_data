@@ -6,6 +6,7 @@ import csv
 import time
 import tracemalloc
 from collections import Counter
+from functools import reduce
 from pathlib import Path
 
 LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "web_logs.csv"
@@ -64,6 +65,21 @@ def print_report(total, by_status, by_path, by_hour, by_ip):
         print(f"  {ip:<16} {c:>5,}")
 
 
+def fold_check(path, total, by_status):
+    # fold 패턴: for문의 "누적"을 reduce로 표현한 것.
+    # 앞의 결과(acc)에 새 row를 반영해서 새 결과를 돌려주는 걸 끝까지 반복한다.
+    # 똑같은 일을 두 방식으로 해보고 결과가 같은지 대조해봤다.
+    def fold(acc, row):
+        acc["total"] += 1
+        acc["status"][row["status"]] += 1
+        return acc
+
+    result = reduce(fold, read_logs(path), {"total": 0, "status": Counter()})
+    same = result["total"] == total and result["status"] == by_status
+    print(f"\n[fold 패턴] functools.reduce 재집계 → {result['total']:,}건, ", end="")
+    print("for문 집계와 일치" if same else "불일치?? 뭔가 잘못됨")
+
+
 def memory_compare(path):
     # 확장과제: readlines() vs 제너레이터 메모리 실측
     # 말로만 "메모리 적게 씀" 하면 안 와닿아서 직접 재봤다
@@ -97,4 +113,5 @@ if __name__ == "__main__":
     print_report(total, *counters)
     print(f"\n집계 시간: {elapsed:.2f}초 (one-pass)")
 
+    fold_check(LOG_PATH, total, counters[0])
     memory_compare(LOG_PATH)
