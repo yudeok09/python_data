@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <style>
+    body { font-family: -apple-system, 'Malgun Gothic', sans-serif; max-width: 760px;
+           margin: 0 auto; padding: 32px; color: #1c1c28; background: #fafbff; }
+    h1 { color: #2a3a6a; margin-bottom: 4px; }
+    .meta { color: #888; font-size: 13px; margin-bottom: 24px; }
+    .total { font-size: 15px; margin: 16px 0; padding: 14px 18px; background: #eef1fb;
+             border-left: 5px solid #3a4a7a; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); border-radius: 8px; overflow: hidden; }
+    th { background: #3a4a7a; color: #fff; padding: 11px 14px; text-align: left; font-size: 14px; }
+    td { padding: 10px 14px; border-top: 1px solid #eef; font-size: 14px; }
+    tr:nth-child(even) td { background: #f7f8fd; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .rank { color: #3a4a7a; font-weight: 700; }
+    footer { margin-top: 28px; color: #aaa; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>{{ title }}</h1>
+  <div class="meta">생성 시각: {{ generated_at }} · 기준 컬럼: {{ group_by }}</div>
+
+  <div class="total">
+    전체 {{ row_count }}개 그룹 · 총매출 합계 <b>{{ grand_total }}</b>원
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>{{ group_by }}</th>
+        <th class="num">건수</th><th class="num">평균단가</th><th class="num">총매출</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td class="rank">{{ loop.index }}</td>
+        <td>{{ row.group }}</td>
+        <td class="num">{{ "{:,}".format(row.count) }}</td>
+        <td class="num">{{ "{:,.0f}".format(row.avg_price) }}</td>
+        <td class="num">{{ "{:,.0f}".format(row.total) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <footer>이 리포트는 run_scheduler.py에 의해 자동 생성되었습니다 · 설정: config.py</footer>
+</body>
+</html>
