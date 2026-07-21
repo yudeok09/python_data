@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>SKALA 광주 3반 진도 코치</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    margin: 0; padding: 36px 20px; background: #f4f6fb; color: #16182a; }
+  .wrap { max-width: 940px; margin: 0 auto; }
+  header { background: linear-gradient(120deg, #2b3566, #4a5aa8); color: #fff;
+    padding: 26px 30px; border-radius: 16px 16px 0 0; }
+  header h1 { margin: 0; font-size: 25px; letter-spacing: -.4px; }
+  header p { margin: 6px 0 0; opacity: .82; font-size: 13px; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: #dde2f0; border-radius: 0 0 16px 16px; overflow: hidden; margin-bottom: 26px; }
+  .kpi { background: #fff; padding: 18px 20px; }
+  .kpi b { display: block; font-size: 24px; color: #2b3566; font-variant-numeric: tabular-nums; }
+  .kpi span { font-size: 12px; color: #7a7f95; }
+  section { background: #fff; border-radius: 14px; padding: 24px 26px; margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(20,25,60,.07); }
+  h2 { font-size: 16px; margin: 0 0 4px; color: #2b3566; }
+  .sub { font-size: 12.5px; color: #8a8fa3; margin: 0 0 16px; }
+  .frow { display: grid; grid-template-columns: 46px 1fr 190px 78px; align-items: center;
+    gap: 10px; padding: 6px 0; font-size: 13.5px; }
+  .frow .d { font-size: 11px; color: #9aa0b5; }
+  .frow.hot .t { color: #c0392b; font-weight: 600; }
+  .track { display: block; height: 9px; background: #e9ecf7; border-radius: 5px; overflow: hidden; }
+  .track > span { display: block; height: 100%; background: #4a5aa8; border-radius: 5px; }
+  .frow.hot .track > span { background: #d9534f; }
+  .track.sm { width: 108px; }
+  .c { font-size: 12.5px; color: #555; text-align: right; font-variant-numeric: tabular-nums; }
+  .drop { color: #c0392b; font-style: normal; font-size: 11px; margin-left: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; color: #7a7f95; font-size: 11.5px; font-weight: 600;
+    padding: 0 8px 8px; border-bottom: 1px solid #eceffa; }
+  td { padding: 9px 8px; border-bottom: 1px solid #f4f6fb; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .nm { font-weight: 600; }
+  .hand { font-style: normal; font-size: 10.5px; background: #fff1cf; color: #9a6b00;
+    padding: 1px 6px; border-radius: 20px; margin-left: 6px; }
+  .tag { font-size: 11px; background: #eef1fb; color: #4a5aa8; padding: 2px 8px; border-radius: 20px; }
+  .grade { font-size: 11.5px; padding: 2px 9px; border-radius: 20px; }
+  .grade.hi { background: #fdecea; color: #c0392b; }
+  .grade.mid { background: #fff6e0; color: #a07000; }
+  .grade.lo { background: #eaf6ee; color: #2b7a45; }
+  .stat { display: flex; gap: 14px; flex-wrap: wrap; }
+  .stat div { flex: 1; min-width: 190px; background: #f7f9ff; border-radius: 10px; padding: 14px 16px; }
+  .stat b { display: block; font-size: 17px; color: #2b3566; }
+  .stat small { color: #7a7f95; font-size: 11.5px; }
+  .warn { margin-top: 14px; background: #fffaf0; border-left: 4px solid #e0a020;
+    padding: 12px 15px; border-radius: 8px; font-size: 13px; line-height: 1.65; }
+  .todo li { margin-bottom: 6px; font-size: 13.5px; }
+  footer { text-align: center; color: #a3a8bb; font-size: 11.5px; padding: 8px 0 4px; }
+</style></head><body><div class="wrap">
+
+<header>
+  <h1>SKALA 광주 3반 · 진도 코치</h1>
+  <p>진도 체크표 내보내기(2026-07-18) 를 파이썬으로 다시 읽어 정리 · 과제 14개 / 수강생 10명</p>
+</header>
+<div class="kpis">
+  <div class="kpi"><b>68%</b><span>반 평균 진도율</span></div>
+  <div class="kpi"><b>2명</b><span>14개 전부 완주</span></div>
+  <div class="kpi"><b>20%</b><span>최난관 과제 완료율</span></div>
+  <div class="kpi"><b>1명</b><span>도움 요청</span></div>
+</div>
+
+<section>
+  <h2>① 커리큘럼 퍼널 — 어디서 떨어져 나가나</h2>
+  <p class="sub">과제를 배운 순서대로 세워놓고 남은 인원을 셌다. 빨간 줄이 가장 많이 막힌 지점.</p>
+  
+        <div class="frow">
+          <span class="d">day1</span>
+          <span class="t">웹 워크플로 이해</span>
+          <span class="track"><span style="width:100%"></span></span>
+          <span class="c">10/10</span>
+        </div>
+        <div class="frow">
+          <span class="d">day1</span>
+          <span class="t">자기소개 페이지</span>
+          <span class="track"><span style="width:100%"></span></span>
+          <span class="c">10/10</span>
+        </div>
+        <div class="frow">
+          <span class="d">day1</span>
+          <span class="t">바로가기 링크</span>
+          <span class="track"><span style="width:100%"></span></span>
+          <span class="c">10/10</span>
+        </div>
+        <div class="frow">
+          <span class="d">day1</span>
+          <span class="t">회원가입 폼</span>
+          <span class="track"><span style="width:100%"></span></span>
+          <span class="c">10/10</span>
+        </div>
+        <div class="frow">
+          <span class="d">day1</span>
+          <span class="t">여행지 허브</span>
+          <span class="track"><span style="width:90%"></span></span>
+          <span class="c">9/10<i class="drop">-1</i></span>
+        </div>
+        <div class="frow">
+          <span class="d">day1</span>
+          <span class="t">회원가입·결과 페이지</span>
+          <span class="track"><span style="width:90%"></span></span>
+          <span class="c">9/10</span>
+        </div>
+        <div class="frow">
+          <span class="d">day1</span>
+          <span class="t">여행지 소개 페이지</span>
+          <span class="track"><span style="width:80%"></span></span>
+          <span class="c">8/10<i class="drop">-1</i></span>
+        </div>
+        <div class="frow">
+          <span class="d">day2</span>
+          <span class="t">CSS 스타일링</span>
+          <span class="track"><span style="width:80%"></span></span>
+          <span class="c">8/10</span>
+        </div>
+        <div class="frow">
+          <span class="d">day2</span>
+          <span class="t">JavaScript 기초</span>
+          <span class="track"><span style="width:60%"></span></span>
+          <span class="c">6/10<i class="drop">-2</i></span>
+        </div>
+        <div class="frow">
+          <span class="d">day2</span>
+          <span class="t">DOM 이벤트</span>
+          <span class="track"><span style="width:50%"></span></span>
+          <span class="c">5/10<i class="drop">-1</i></span>
+        </div>
+        <div class="frow">
+          <span class="d">day2</span>
+          <span class="t">비동기와 모듈</span>
+          <span class="track"><span style="width:30%"></span></span>
+          <span class="c">3/10<i class="drop">-2</i></span>
+        </div>
+        <div class="frow">
+          <span class="d">day2</span>
+          <span class="t">마무리 퀴즈</span>
+          <span class="track"><span style="width:30%"></span></span>
+          <span class="c">3/10</span>
+        </div>
+        <div class="frow hot">
+          <span class="d">day2</span>
+          <span class="t">상품 카드 갤러리</span>
+          <span class="track"><span style="width:20%"></span></span>
+          <span class="c">2/10<i class="drop">-1</i></span>
+        </div>
+        <div class="frow hot">
+          <span class="d">day2</span>
+          <span class="t">할 일 관리 앱</span>
+          <span class="track"><span style="width:20%"></span></span>
+          <span class="c">2/10</span>
+        </div>
+</section>
+
+<section>
+  <h2>② 코칭 우선순위</h2>
+  <p class="sub">위험점수 = 미완 비율(50) + day2 미완(20) + 본인 도움요청(30).
+     후반부에서 못 따라오는 쪽에 가중치를 더 줬다.</p>
+  <table>
+    <thead><tr><th>이름</th><th>트랙</th><th class="num">완료</th><th>진도</th>
+      <th class="num">day2</th><th class="num">위험</th><th>등급</th></tr></thead>
+    <tbody>
+        <tr>
+          <td class="nm">변우석<i class="hand">손들었음</i></td>
+          <td><span class="tag">전공</span></td>
+          <td class="num">4/14</td>
+          <td><span class="track sm"><span style="width:29%"></span></span></td>
+          <td class="num">0/7</td>
+          <td class="num">86</td>
+          <td><span class="grade hi">우선코칭</span></td>
+        </tr>
+        <tr>
+          <td class="nm">임영웅</td>
+          <td><span class="tag">비전공</span></td>
+          <td class="num">6/14</td>
+          <td><span class="track sm"><span style="width:43%"></span></span></td>
+          <td class="num">0/7</td>
+          <td class="num">49</td>
+          <td><span class="grade hi">우선코칭</span></td>
+        </tr>
+        <tr>
+          <td class="nm">김태리</td>
+          <td><span class="tag">비전공</span></td>
+          <td class="num">8/14</td>
+          <td><span class="track sm"><span style="width:57%"></span></span></td>
+          <td class="num">1/7</td>
+          <td class="num">39</td>
+          <td><span class="grade mid">관찰</span></td>
+        </tr>
+        <tr>
+          <td class="nm">장원영</td>
+          <td><span class="tag">비전공</span></td>
+          <td class="num">8/14</td>
+          <td><span class="track sm"><span style="width:57%"></span></span></td>
+          <td class="num">1/7</td>
+          <td class="num">39</td>
+          <td><span class="grade mid">관찰</span></td>
+        </tr>
+        <tr>
+          <td class="nm">안유진</td>
+          <td><span class="tag">비전공</span></td>
+          <td class="num">9/14</td>
+          <td><span class="track sm"><span style="width:64%"></span></span></td>
+          <td class="num">2/7</td>
+          <td class="num">32</td>
+          <td><span class="grade mid">관찰</span></td>
+        </tr>
+        <tr>
+          <td class="nm">유재석</td>
+          <td><span class="tag">비전공</span></td>
+          <td class="num">10/14</td>
+          <td><span class="track sm"><span style="width:71%"></span></span></td>
+          <td class="num">3/7</td>
+          <td class="num">26</td>
+          <td><span class="grade mid">관찰</span></td>
+        </tr>
+        <tr>
+          <td class="nm">이도현</td>
+          <td><span class="tag">전공</span></td>
+          <td class="num">10/14</td>
+          <td><span class="track sm"><span style="width:71%"></span></span></td>
+          <td class="num">3/7</td>
+          <td class="num">26</td>
+          <td><span class="grade mid">관찰</span></td>
+        </tr>
+        <tr>
+          <td class="nm">아이유</td>
+          <td><span class="tag">비전공</span></td>
+          <td class="num">12/14</td>
+          <td><span class="track sm"><span style="width:86%"></span></span></td>
+          <td class="num">5/7</td>
+          <td class="num">13</td>
+          <td><span class="grade lo">안정</span></td>
+        </tr>
+        <tr>
+          <td class="nm">박보검</td>
+          <td><span class="tag">전공</span></td>
+          <td class="num">14/14</td>
+          <td><span class="track sm"><span style="width:100%"></span></span></td>
+          <td class="num">7/7</td>
+          <td class="num">0</td>
+          <td><span class="grade lo">안정</span></td>
+        </tr>
+        <tr>
+          <td class="nm">카리나</td>
+          <td><span class="tag">전공</span></td>
+          <td class="num">14/14</td>
+          <td><span class="track sm"><span style="width:100%"></span></span></td>
+          <td class="num">7/7</td>
+          <td class="num">0</td>
+          <td><span class="grade lo">안정</span></td>
+        </tr></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>③ 전공/비전공 차이는 진짜일까</h2>
+  <p class="sub">눈으로는 차이가 보이는데, 10명짜리 표본에서 그걸 그대로 믿으면 안 된다.</p>
+  <div class="stat">
+    <div><b>10.5 vs 8.8</b><small>평균 완료 과제 수 (전공 vs 비전공)</small></div>
+    <div><b>p = 0.389</b><small>Mann-Whitney U (비모수)</small></div>
+    <div><b>p = 0.133</b><small>Fisher 정확검정 (완주 여부)</small></div>
+  </div>
+  <div class="warn">
+    <b>검정을 왜 바꿨나:</b> 종합실습2에서는 카이제곱을 썼지만 여기서는 못 쓴다.
+    2×2 표의 <b>기대빈도 최솟값이 0.80</b>로 5를 밑돌아 카이제곱 근사가 깨지기 때문이다
+    (참고로 억지로 돌리면 p=0.259가 나오는데, 이 값은 신뢰할 수 없다).
+    소표본에서는 Fisher 정확검정이 맞고, 분포 비교는 정규성 가정이 필요 없는 Mann-Whitney U가 안전하다.<br>
+    <b>결론:</b> 두 검정 모두 p&gt;0.05 → <b>전공 여부로 진도 차이를 설명할 수 없다.</b>
+    실제로 진도가 가장 느린 학생도 전공자다. 트랙이 아니라 개인별로 봐야 한다.
+  </div>
+</section>
+
+<section>
+  <h2>다음 수업 액션</h2>
+  <p class="sub">숫자만 뽑고 끝내면 리포트가 아니라 그냥 표다. 할 일로 바꿔봤다.</p>
+  <ul class="todo">
+    <li><b>다시 짚을 과제</b> — 상품 카드 갤러리 · 할 일 관리 앱 · 비동기와 모듈</li>
+    <li><b>개별 코칭</b> — 변우석, 임영웅 (day2 진입 전 따라잡기 필요)</li>
+    <li><b>수업 운영</b> — day2 후반 과제에서 이탈이 몰리니, 갤러리·투두는 실습 시간을 더 잡는 편이 낫겠다</li>
+  </ul>
+</section>
+
+<footer>SKALA 광주 3반 유덕현 · 파이썬 데이터분석 창의과제</footer>
+</div></body></html>

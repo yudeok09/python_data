@@ -1,0 +1,267 @@
+{
+  "className": "SKALA 광주 3반",
+  "exportedAt": "2026-07-18T12:50:02.281Z",
+  "tasks": [
+    {
+      "id": "d1-web-flow",
+      "day": "day1",
+      "title": "웹 워크플로 이해",
+      "description": "요청·응답 흐름과 HTML 기본 구조"
+    },
+    {
+      "id": "d1-intro",
+      "day": "day1",
+      "title": "자기소개 페이지",
+      "description": "제목 위계, 목록, 링크 구성"
+    },
+    {
+      "id": "d1-links",
+      "day": "day1",
+      "title": "바로가기 링크",
+      "description": "target과 외부 링크 연결"
+    },
+    {
+      "id": "d1-form",
+      "day": "day1",
+      "title": "회원가입 폼",
+      "description": "label, input, 유효성 검증"
+    },
+    {
+      "id": "d1-travel-hub",
+      "day": "day1",
+      "title": "여행지 허브",
+      "description": "이미지 alt와 시맨틱 태그"
+    },
+    {
+      "id": "d1-signup-result",
+      "day": "day1",
+      "title": "회원가입·결과 페이지",
+      "description": "폼 전송과 결과표 출력"
+    },
+    {
+      "id": "d1-travel-page",
+      "day": "day1",
+      "title": "여행지 소개 페이지",
+      "description": "앵커, 갤러리, 영상, 그라데이션"
+    },
+    {
+      "id": "d2-css",
+      "day": "day2",
+      "title": "CSS 스타일링",
+      "description": "박스 모델, Flex, Grid, 반응형"
+    },
+    {
+      "id": "d2-js",
+      "day": "day2",
+      "title": "JavaScript 기초",
+      "description": "변수, 조건문, 반복문, 배열"
+    },
+    {
+      "id": "d2-dom",
+      "day": "day2",
+      "title": "DOM 이벤트",
+      "description": "요소 선택, 변경, 추가, 삭제"
+    },
+    {
+      "id": "d2-async",
+      "day": "day2",
+      "title": "비동기와 모듈",
+      "description": "fetch, async/await, 모듈 분리"
+    },
+    {
+      "id": "d2-quiz",
+      "day": "day2",
+      "title": "마무리 퀴즈",
+      "description": "HTML·CSS·JavaScript 개념 확인"
+    },
+    {
+      "id": "d2-gallery",
+      "day": "day2",
+      "title": "상품 카드 갤러리",
+      "description": "CSS 변수, 다크모드, 3·2·1열"
+    },
+    {
+      "id": "d2-todo",
+      "day": "day2",
+      "title": "할 일 관리 앱",
+      "description": "상태, 이벤트 위임, localStorage"
+    }
+  ],
+  "students": [
+    {
+      "id": "iu",
+      "name": "아이유",
+      "track": "non-major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css",
+        "d2-js",
+        "d2-dom",
+        "d2-async",
+        "d2-quiz"
+      ]
+    },
+    {
+      "id": "park-bo-gum",
+      "name": "박보검",
+      "track": "major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css",
+        "d2-js",
+        "d2-dom",
+        "d2-async",
+        "d2-quiz",
+        "d2-gallery",
+        "d2-todo"
+      ]
+    },
+    {
+      "id": "kim-tae-ri",
+      "name": "김태리",
+      "track": "non-major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css"
+      ]
+    },
+    {
+      "id": "yoo-jae-suk",
+      "name": "유재석",
+      "track": "non-major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css",
+        "d2-js",
+        "d2-dom"
+      ]
+    },
+    {
+      "id": "jang-won-young",
+      "name": "장원영",
+      "track": "non-major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css"
+      ]
+    },
+    {
+      "id": "karina",
+      "name": "카리나",
+      "track": "major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css",
+        "d2-js",
+        "d2-dom",
+        "d2-async",
+        "d2-quiz",
+        "d2-gallery",
+        "d2-todo"
+      ]
+    },
+    {
+      "id": "lim-young-woong",
+      "name": "임영웅",
+      "track": "non-major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result"
+      ]
+    },
+    {
+      "id": "an-yu-jin",
+      "name": "안유진",
+      "track": "non-major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css",
+        "d2-js"
+      ]
+    },
+    {
+      "id": "lee-do-hyun",
+      "name": "이도현",
+      "track": "major",
+      "helpNeeded": false,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form",
+        "d1-travel-hub",
+        "d1-signup-result",
+        "d1-travel-page",
+        "d2-css",
+        "d2-js",
+        "d2-dom"
+      ]
+    },
+    {
+      "id": "byeon-woo-seok",
+      "name": "변우석",
+      "track": "major",
+      "helpNeeded": true,
+      "completed": [
+        "d1-web-flow",
+        "d1-intro",
+        "d1-links",
+        "d1-form"
+      ]
+    }
+  ]
+}

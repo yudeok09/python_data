@@ -1,0 +1,4 @@
+﻿product_id,product_name,error_field,error_message,recommended_action
+P014,초코송이,price,Input should be greater than 0,원가표를 확인하고 0원보다 큰 판매가를 다시 입력
+P007,얼음컵 230g,stock,Input should be greater than or equal to 0,매대와 창고의 실재고를 다시 세어 0 이상으로 수정
+P020,상품명 누락,product_name,String should have at least 1 character,바코드와 입고표를 확인해 상품명을 입력
