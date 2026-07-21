@@ -50,13 +50,35 @@ def summarize(df: pd.DataFrame, group_by: str, top_n: int) -> list[dict]:
     ]
 
 
-def render_html(config: ReportConfig, rows: list[dict], generated_at: datetime) -> str:
+def build_kpis(df: pd.DataFrame, rows: list[dict]) -> list[dict]:
+    # 표만 있으면 한눈에 안 들어와서 위에 KPI 몇 개를 뽑아둔다.
+    grand_total = sum(r["total"] for r in rows)
+    order_count = int(df["amount"].count())
+    top = max(rows, key=lambda r: r["total"]) if rows else None
+    return [
+        {"label": "총매출", "value": f"{grand_total:,.0f}"},
+        {"label": "주문 건수", "value": f"{order_count:,}"},
+        {
+            "label": "건당 평균매출",
+            "value": f"{grand_total / max(order_count, 1):,.0f}",
+        },
+        {"label": "매출 1위", "value": top["group"] if top else "-"},
+    ]
+
+
+def render_html(
+    config: ReportConfig,
+    rows: list[dict],
+    generated_at: datetime,
+    kpis: list[dict] | None = None,
+) -> str:
     env = Environment(
         loader=FileSystemLoader(TEMPLATE_DIR),
         autoescape=select_autoescape(["html"]),  # XSS 방지 겸 안전하게
     )
     template = env.get_template("report.html.j2")
     grand_total = sum(r["total"] for r in rows)
+    max_total = max((r["total"] for r in rows), default=1) or 1
     return template.render(
         title=config.title,
         group_by=config.group_by,
@@ -64,6 +86,9 @@ def render_html(config: ReportConfig, rows: list[dict], generated_at: datetime) 
         rows=rows,
         row_count=len(rows),
         grand_total=f"{grand_total:,.0f}",
+        kpis=kpis or [],
+        # 표 안에 비중 막대를 그리려고 1위 대비 비율을 미리 계산해서 넘긴다
+        max_total=max_total,
     )
 
 
@@ -71,8 +96,9 @@ def generate_report(config: ReportConfig = DEFAULT) -> Path:
     # 조율은 안 하고 리포트 하나 만드는 것만. 입력(config) → 출력(파일 경로).
     df = _load_and_clean(config.data_path)
     rows = summarize(df, config.group_by, config.top_n)
+    kpis = build_kpis(df, rows)
     now = datetime.now()
-    html = render_html(config, rows, now)
+    html = render_html(config, rows, now, kpis)
 
     config.output_dir.mkdir(parents=True, exist_ok=True)
     out_path = config.output_dir / f"report_{now:%Y%m%d_%H%M%S}.html"

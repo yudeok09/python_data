@@ -67,6 +67,28 @@ def run_duckdb():
     return res, (time.perf_counter() - start) * 1000
 
 
+def show_lazy_plan():
+    # Lazy가 왜 빠른지 말로만 하면 안 믿기니까 실행계획을 직접 뽑아본다.
+    # collect() 대신 explain()을 부르면 Polars가 짠 계획표가 나온다.
+    plan = (
+        pl.scan_csv(CSV_STR)
+        .filter(pl.col("amount") > 0)
+        .group_by("event_type")
+        .agg([pl.len().alias("cnt"), pl.col("amount").mean().alias("avg")])
+        .sort("cnt", descending=True)
+        .explain()
+    )
+    print("\n[Polars 실행계획] .explain() — 지연 실행이 뭘 최적화했나")
+    for line in plan.splitlines():
+        print("  " + line)
+
+    pushed = "SELECTION" in plan.upper() or "FILTER" in plan.upper()
+    projected = "PROJECT" in plan.upper() or "σ" in plan
+    if pushed or projected:
+        print("  → 필터/컬럼 선택이 스캔 단계까지 내려갔다(pushdown).")
+        print("    파일을 다 읽고 거르는 게 아니라, 읽을 때부터 걸러서 읽는다.")
+
+
 def best_of(fn, n=3):
     # 첫 실행엔 캐시·초기화 비용이 섞이므로 여러 번 돌려 가장 빠른 값을 쓴다
     best_ms, result = float("inf"), None
@@ -119,9 +141,18 @@ def main():
     ):
         print(f"{name:<10}{t:>12.0f}{base / t:>9.1f}x")
 
+    show_lazy_plan()
+
     print(
         "\n빠른 이유는 '더 빨리 일해서'가 아니라 '쓸데없는 일을 안 해서'(pushdown)다."
     )
+
+    # "항상 Polars"가 정답은 아니라서, 고를 때 뭘 보는지도 정리해봤다
+    print("\n[엔진 선택 기준]")
+    print("  데이터 규모   : 수천 행이면 Pandas가 더 편하다. 손에 익은 게 빠른 길.")
+    print("  SQL 친화도    : 팀이 SQL에 익숙하면 DuckDB가 생산적 (파일을 바로 질의)")
+    print("  메모리        : 메모리보다 큰 데이터면 Polars scan_* / DuckDB 쪽이 유리")
+    print("  생태계        : 시각화·ML 붙이려면 결국 Pandas로 변환해야 할 때가 많다")
 
 
 if __name__ == "__main__":

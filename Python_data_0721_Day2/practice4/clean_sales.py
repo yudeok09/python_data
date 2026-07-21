@@ -4,6 +4,7 @@
 # 순서를 지키는 게 핵심 (타입 먼저 안 잡으면 결측 개수가 나중에 또 늘어난다)
 # 실행: python practice4/clean_sales.py
 
+import warnings
 from pathlib import Path
 
 import pandas as pd
@@ -69,6 +70,38 @@ def fill_missing(df):
         f"           처리 후 결측: unit_price {df['unit_price'].isna().sum()}, region {df['region'].isna().sum()}"
     )
     return df
+
+
+def cow_demo(df):
+    # STEP7. Copy-on-Write 확인.
+    # 가이드엔 pd.options.mode.copy_on_write = True 로 켜라고 되어있는데,
+    # 지금 pandas 3.0에선 그 옵션이 폐기됐다(항상 켜져 있음). 그래서 켜는 대신
+    # "체인 인덱싱이 왜 실패하는지"를 직접 돌려서 확인해봤다.
+    print("\n" + "=" * 52)
+    print(f"  STEP7. Copy-on-Write 확인 (pandas {pd.__version__})")
+    print("=" * 52)
+
+    sample = df.head(50).copy()
+    target = sample["quantity"] > 5
+    before = int(sample.loc[target, "quantity"].sum())
+
+    # 체인 인덱싱: df[조건]이 사본을 만들고, 거기에 쓰고 버린다 → 원본 그대로
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            sample[target]["quantity"] = 0
+        except Exception:
+            pass
+    after_chain = int(sample.loc[target, "quantity"].sum())
+
+    # .loc으로 원본에 직접 쓰기 → 반영됨
+    sample.loc[target, "quantity"] = 0
+    after_loc = int(sample.loc[target, "quantity"].sum())
+
+    print(f"  원본 합계            : {before}")
+    print(f"  체인 인덱싱으로 0 대입: {after_chain}  ← 안 바뀜 (사본에 썼으니까)")
+    print(f"  .loc으로 0 대입      : {after_loc}  ← 이게 정답")
+    print("  그래서 이 코드는 값을 바꿀 때 전부 .loc을 쓴다.")
 
 
 def winsorize(s, k=1.5):
@@ -148,8 +181,6 @@ def aggregate(df):
 
 
 def main():
-    # STEP7. Copy-on-Write: pandas 2.x부터 슬라이스는 항상 복사본처럼 동작.
-    # 원본을 바꾸려면 체인인덱싱 말고 .loc으로 직접 써야 한다 (이 코드도 전부 .loc 사용)
     df = pd.read_csv(DATA_PATH)
 
     diagnose(df)
@@ -164,7 +195,9 @@ def main():
     print(f"\n[정제 전후] 결측 {na_before}건 → {na_after}건")
 
     aggregate(df)
+    cow_demo(df)
     print("\n정제 완료. 조용히 바뀐 데이터가 가장 위험하니 전후를 전부 출력했다.")
+    print("정제 규칙은 함수로 쪼개뒀고 test_clean_sales.py로 검증한다 (확장과제).")
 
 
 if __name__ == "__main__":

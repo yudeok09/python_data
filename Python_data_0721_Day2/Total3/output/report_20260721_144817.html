@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>일일 매출 요약 리포트</title>
+  <style>
+    body { font-family: -apple-system, 'Malgun Gothic', sans-serif; max-width: 760px;
+           margin: 0 auto; padding: 32px; color: #1c1c28; background: #fafbff; }
+    h1 { color: #2a3a6a; margin-bottom: 4px; }
+    .meta { color: #888; font-size: 13px; margin-bottom: 24px; }
+    .total { font-size: 15px; margin: 16px 0; padding: 14px 18px; background: #eef1fb;
+             border-left: 5px solid #3a4a7a; border-radius: 8px; }
+    .kpis { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
+    .kpi { flex: 1; min-width: 140px; background: #fff; border-radius: 10px; padding: 14px 16px;
+           box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #3a4a7a; }
+    .kpi .v { font-size: 22px; font-weight: 700; color: #2a3a6a;
+              font-variant-numeric: tabular-nums; }
+    .kpi .k { font-size: 12px; color: #777; margin-top: 3px; }
+    .bar { height: 6px; background: #dfe4f5; border-radius: 3px; margin-top: 5px; }
+    .bar > span { display: block; height: 100%; background: #3a4a7a; border-radius: 3px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06); border-radius: 8px; overflow: hidden; }
+    th { background: #3a4a7a; color: #fff; padding: 11px 14px; text-align: left; font-size: 14px; }
+    td { padding: 10px 14px; border-top: 1px solid #eef; font-size: 14px; }
+    tr:nth-child(even) td { background: #f7f8fd; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .rank { color: #3a4a7a; font-weight: 700; }
+    footer { margin-top: 28px; color: #aaa; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>일일 매출 요약 리포트</h1>
+  <div class="meta">생성 시각: 2026-07-21 14:48:17 · 기준 컬럼: category</div>
+
+  
+  <div class="kpis">
+    
+    <div class="kpi"><div class="v">12,137,771,654</div><div class="k">총매출</div></div>
+    
+    <div class="kpi"><div class="v">5,000</div><div class="k">주문 건수</div></div>
+    
+    <div class="kpi"><div class="v">2,427,554</div><div class="k">건당 평균매출</div></div>
+    
+    <div class="kpi"><div class="v">Beauty</div><div class="k">매출 1위</div></div>
+    
+  </div>
+  
+
+  <div class="total">
+    전체 5개 그룹 · 총매출 합계 <b>12,137,771,654</b>원
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>category</th>
+        <th class="num">건수</th><th class="num">평균단가</th><th class="num">총매출</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr>
+        <td class="rank">1</td>
+        <td>Beauty</td>
+        <td class="num">1,012</td>
+        <td class="num">156,527</td>
+        <td class="num">
+          3,001,031,054
+          <div class="bar"><span style="width: 100.0%"></span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td class="rank">2</td>
+        <td>Fashion</td>
+        <td class="num">967</td>
+        <td class="num">155,762</td>
+        <td class="num">
+          2,657,507,846
+          <div class="bar"><span style="width: 88.6%"></span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td class="rank">3</td>
+        <td>Electronics</td>
+        <td class="num">995</td>
+        <td class="num">150,542</td>
+        <td class="num">
+          2,524,390,519
+          <div class="bar"><span style="width: 84.1%"></span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td class="rank">4</td>
+        <td>Food</td>
+        <td class="num">1,049</td>
+        <td class="num">150,798</td>
+        <td class="num">
+          1,981,805,190
+          <div class="bar"><span style="width: 66.0%"></span></div>
+        </td>
+      </tr>
+      
+      <tr>
+        <td class="rank">5</td>
+        <td>Home</td>
+        <td class="num">977</td>
+        <td class="num">150,479</td>
+        <td class="num">
+          1,973,037,045
+          <div class="bar"><span style="width: 65.7%"></span></div>
+        </td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+  <footer>이 리포트는 run_scheduler.py에 의해 자동 생성되었습니다 · 설정: config.py</footer>
+</body>
+</html>
